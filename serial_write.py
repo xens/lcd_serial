@@ -2,20 +2,26 @@
 
 import serial, time, sys
 
+# Serial port settings
 port    = '/dev/ttyUSB0'
-max_len = 32
+speed   = 38400
 
-ser = serial.Serial(port, 38400)
+# Display related stuffs
+max_len    = 32
+clear      = '\x0C'
+feed       = '\x0B'
 
 def display_clock():
 
+  ser = serial.Serial(port, speed)
+  ser.write(clear)
   counter = 0
 
   while True:
     current_time = time.asctime(time.localtime(time.time()))
 
     if counter == 0:
-      text = 'GPS locked  '
+      text = 'GPS locked        '
       counter = 1
 
     else:
@@ -25,8 +31,7 @@ def display_clock():
     while (len(current_time)) != max_len:
       current_time = current_time + ' ' 
     
-    ser.write('\x0B')
-    ser.write(current_time+text)
+    ser.write(feed + current_time + text)
     time.sleep(1)
 
 display_clock()
